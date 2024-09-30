@@ -52,7 +52,8 @@ class ILHookThing
             x => x.MatchLdfld<SpawnableOutsideObjectWithRarity>(nameof(SpawnableOutsideObjectWithRarity.spawnableObject)),
             x => x.MatchLdfld<SpawnableOutsideObject>(nameof(SpawnableOutsideObject.objectWidth)),
             x => x.MatchConvR4(),
-            x => x.MatchLdcR4(6)
+            x => x.MatchLdcR4(6),
+            x => x.MatchAdd()
         ))
         {
             Plugin.Logger.LogError($"[{nameof(ILHook_RoundManager_SpawnOutsideHazards)}] Could not match second predicates!");
@@ -60,9 +61,9 @@ class ILHookThing
         }
 
         // Find the end of the previous match
-        ILCursor cAtEnd = c.GotoNext(MoveType.After,
-            x => x.MatchConvR4(),
-            x => x.MatchLdcR4(6));
+        ILCursor cAtEnd = new ILCursor(c).GotoNext(MoveType.After,
+            x => x.MatchLdcR4(6),
+            x => x.MatchAdd());
 
         ILLabel label_original_logic = il.DefineLabel(c.Next);
         ILLabel label_past_original_logic = il.DefineLabel(cAtEnd.Next);
@@ -79,7 +80,7 @@ class ILHookThing
         //  past_original_logic:
 
         c.Emit(OpCodes.Ldarg_0);
-        c.Emit(OpCodes.Ldloc_S, 18); // int n, used in for loop
+        c.Emit(OpCodes.Ldloc_S, (byte)18); // int n, used in for loop
         c.EmitDelegate<Func<RoundManager, int, bool>>((self, n) =>
         {
             return self.spawnDenialPoints[n].gameObject.name.Contains("_XuPatch");
@@ -90,7 +91,7 @@ class ILHookThing
 
         // We emit our custom logic here
         c.Emit(OpCodes.Ldarg_0);
-        c.Emit(OpCodes.Ldloc_S, 18); // int n, used in for loop
+        c.Emit(OpCodes.Ldloc_S, (byte)18); // int n, used in for loop
         c.EmitDelegate<Func<RoundManager, int, float>>((self, n) =>
         {
             Plugin.Logger.LogInfo("Ran custom logic!");
