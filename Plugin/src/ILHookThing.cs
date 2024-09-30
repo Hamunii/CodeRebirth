@@ -13,9 +13,6 @@ class ILHookThing
 
     private static void ILHook_RoundManager_SpawnOutsideHazards(ILContext il)
     {
-        Plugin.Logger.LogDebug("Original IL: " + il.ToString());
-
-
         ILCursor c = new(il);
         
         // Make sure we are at the second for loop which uses `spawnDenialPoints`
@@ -99,7 +96,5 @@ class ILHookThing
         });
 
         c.Emit(OpCodes.Br_S, label_past_original_logic);
-
-        Plugin.Logger.LogDebug("Modified IL: " + il.ToString());
     }
 }
