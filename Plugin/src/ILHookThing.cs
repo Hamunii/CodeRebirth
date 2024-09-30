@@ -91,7 +91,6 @@ class ILHookThing
         c.Emit(OpCodes.Ldloc_S, (byte)18); // int n, used in for loop
         c.EmitDelegate<Func<RoundManager, int, float>>((self, n) =>
         {
-            Plugin.Logger.LogInfo("Ran custom logic!");
             return self.spawnDenialPoints[n].transform.localScale.x;
         });
 
